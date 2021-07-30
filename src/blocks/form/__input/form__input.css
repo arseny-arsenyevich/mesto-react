@@ -1,4 +1,4 @@
-.popup__form {
+.form__input {
     display: block;
     border: 0;
     border-bottom: 1px solid rgba(0, 0, 0, 0.2);
@@ -9,8 +9,9 @@
     font-size: 14px;
     line-height: 17px;
     width: 100%;
+    background-color: inherit;
 }
 
-.popup__form::placeholder {
+.form::placeholder {
     color: #C4C4C4;
 }

@@ -1,34 +1,41 @@
-import React from "react"
-import PopupWithForm from "./PopupWithForm"
+import React, { useState, useRef, useEffect } from 'react'
+import Input from './Input';
+import PopupWithForm from './PopupWithForm'
 
-function EditAvatarPopup(props) {
-    const avatarUrl = React.useRef()
+function EditAvatarPopup({ onUpdateAvatar, isOpen, onClose }) {
+    const avatarInput = useRef();
+    const [buttonState, setButtonState] = useState(false);
 
-    const handleSubmit = (evt) => {
-        evt.preventDefault()
-        props.onUpdateAvatar({avatar: avatarUrl.current.value})
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        onUpdateAvatar({ avatar: avatarInput.current.value }, setButtonState);
     }
+
+    useEffect(() => {
+        setButtonState(true);
+        avatarInput.current.value= '';
+    }, [isOpen])
 
     return (
         <PopupWithForm 
-            name="avatar"
-            title="Обновить аватар"
-            buttonTxt="Сохранить"
-            isOpen={props.isOpen}
-            onClose={props.onClose}
+            name='avatar'
+            title='Обновить аватар'
+            buttonTxt='Сохранить'
+            isOpen={isOpen}
+            onClose={onClose}
             onSubmit={handleSubmit}
+            buttonState={buttonState}
         >
-            <label className="popup__field">
-                <input 
-                    ref={avatarUrl}
-                    type="url" 
-                    className="popup__form popup__form_input_avatar" 
-                    name="avatar" id="form-avatar" 
-                    placeholder="Ссылка на картинку" 
-                    required 
-                />
-                <span className="popup__error popup__error_type_form-avatar"></span>
-            </label>
+            <Input 
+                name='avatar'
+                type='url'
+                inputRef={avatarInput}
+                validities={[avatarInput]}
+                setButtonState={setButtonState}
+                placeholder='Ссылка на картинку'
+                isOpen={isOpen}
+            />
         </PopupWithForm>
     )
 }

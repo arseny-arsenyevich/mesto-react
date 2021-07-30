@@ -1,70 +1,58 @@
-import React from "react";
-import PopupWithForm from "./PopupWithForm";
+import React, { useState, useEffect, useRef } from 'react';
+import PopupWithForm from './PopupWithForm';
+import Input from './Input';
 
-function AddPlacePopup (props) {
-    const [name, setName] = React.useState("")
+function AddPlacePopup ({ onAddPlace, isOpen, onClose }) {
+    const nameInput = useRef();
+    const linkInput = useRef();
+    const [buttonState, setButtonState] = useState(true);
 
-    const handleChangeName = (evt) => {
-        setName(evt.target.value)
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        onAddPlace({ name: nameInput.current.value, link: linkInput.current.value }, setButtonState)
     }
 
-    const [link, setLink] = React.useState("")
-
-    const handleChangeLink = (evt) => {
-        setLink(evt.target.value)
-    }
-
-    const handleSubmit = (evt) => {
-        evt.preventDefault()
-        props.onAddPlace({
-            name,
-            link
-        })
-        setName("")
-        setLink("")
-    }
+    useEffect(() => {
+        setButtonState(true);
+        nameInput.current.value= '';
+        linkInput.current.value= '';
+    }, [isOpen])
 
     return (
         <PopupWithForm 
-            name="card"
+            name='card'
             onSubmit={handleSubmit}
-            isOpen={props.isOpen}
+            isOpen={isOpen}
             onClose={() =>{
-                setName("")
-                setLink("")
-                props.onClose()
+                nameInput.current.value= '';
+                linkInput.current.value= '';
+                onClose();
             }}
-            title="Новое место"
-            buttonTxt="Создать"
-        >
-            <label className="popup__field">
-                <input 
-                    value={name}
-                    onChange={handleChangeName}
-                    type="text" 
-                    className="popup__form popup__form_input_place" 
-                    name="name" 
-                    id="form-place" 
-                    placeholder="Название" 
-                    required 
-                    minLength="2" 
-                    maxLength="30" 
-                />
-                <span className="popup__error popup__error_type_form-place"></span>
-            </label>
-            <label className="popup__field">
-                <input 
-                    value={link}
-                    onChange={handleChangeLink}
-                    type="url" 
-                    className="popup__form popup__form_input_link" 
-                    name="link" 
-                    id="form-link" 
-                    placeholder="Ссылка на картинку" 
-                    required 
-                />
-                <span className="popup__error popup__error_type_form-link"></span>
-            </label>
+            title='Новое место'
+            buttonTxt='Создать'
+            buttonState={buttonState}
+            >
+            <Input 
+                name='place'
+                type='text'
+                inputRef={nameInput}
+                validities={[nameInput, linkInput]}
+                setButtonState={setButtonState}
+                placeholder='Название'
+                minLength='2'
+                maxLength='30'
+                isOpen={isOpen}
+            />
+            <Input 
+                name='place-link'
+                type='url'
+                inputRef={linkInput}
+                validities={[linkInput, nameInput]}
+                setButtonState={setButtonState}
+                placeholder='Ссылка на картинку'
+                isOpen={isOpen}
+            />
     </PopupWithForm>
     )
 }

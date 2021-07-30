@@ -1,74 +1,62 @@
-import React from "react"
-import PopupWithForm from "./PopupWithForm"
-import { CurrentUserContext } from "../contexts/CurrentUserContext";
+import React, { useState, useContext, useEffect, useRef } from 'react'
+import PopupWithForm from './PopupWithForm'
+import { CurrentUserContext } from '../contexts/CurrentUserContext';
+import Input from './Input';
 
-function EditProfilePopup (props) {
-    const currentUser = React.useContext(CurrentUserContext);
-
-    const [name, setName] = React.useState("")
-
-    const handleChangeName = (evt) => {
-        setName(evt.target.value)
+function EditProfilePopup ({ onUpdateUser, isOpen, onClose }) {
+    const currentUser = useContext(CurrentUserContext);
+    const nameInput = useRef();
+    const descriptionInput = useRef();
+    const [buttonState, setButtonState] = useState(false);
+    
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onUpdateUser({
+            name: nameInput.current.value,
+            about: descriptionInput.current.value,
+        },
+        setButtonState
+        );
     }
 
-    const [description, setDescription] = React.useState("")
-
-    const handleChangeDescription = (evt) => {
-        setDescription(evt.target.value)
-    }
-
-    const handleSubmit = (evt) => {
-        evt.preventDefault()
-        props.onUpdateUser({
-            name,
-            about: description,
-        });
-    }
-
-    React.useEffect(() => {
-        setName(currentUser.name);
-        setDescription(currentUser.about);
-    }, [currentUser, props.isOpen]); 
+    useEffect(() => {
+        setButtonState(false)
+        nameInput.current.value = currentUser.name;
+        descriptionInput.current.value = currentUser.about;
+    }, [currentUser, isOpen]); 
 
     return (
         <PopupWithForm
-        name="name"
-        isOpen={props.isOpen}
-        onClose={props.onClose}
+        name='name'
+        isOpen={isOpen}
+        onClose={onClose}
         onSubmit={handleSubmit}
-        title="Редактировать профиль"
-        buttonTxt="Сохранить"
+        title='Редактировать профиль'
+        buttonTxt='Сохранить'
+        buttonState={buttonState}
         >
-            <label className="popup__field">
-                <input 
-                    value={name}
-                    onChange={handleChangeName}
-                    type="text" 
-                    className="popup__form popup__form_input_name" 
-                    name="name" 
-                    id="form-name" 
-                    placeholder="Имя" 
-                    required
-                    minLength="2" 
-                    maxLength="40" 
-                />
-                <span className="popup__error popup__error_type_form-name"></span>
-            </label>
-            <label className="popup__field">
-                <input 
-                    value={description}
-                    onChange={handleChangeDescription}
-                    type="text" 
-                    className="popup__form popup__form_input_profession" 
-                    name="about" 
-                    id="form-profession" 
-                    placeholder="О себе" 
-                    required 
-                    minLength="2" 
-                    maxLength="200" 
-                />
-                <span className="popup__error popup__error_type_form-profession"></span>
-            </label>
+            <Input 
+                name='name'
+                type='text'
+                inputRef={nameInput}
+                validities={[nameInput, descriptionInput]}
+                setButtonState={setButtonState}
+                placeholder='Имя'
+                minLength='2'
+                maxLength='40'
+                isOpen={isOpen}
+            />
+            <Input 
+                name='description'
+                type='text'
+                inputRef={descriptionInput}
+                validities={[descriptionInput, nameInput]}
+                setButtonState={setButtonState}
+                placeholder='О себе'
+                minLength='2'
+                maxLength='200'
+                isOpen={isOpen}
+            />
     </PopupWithForm>
     )
 }

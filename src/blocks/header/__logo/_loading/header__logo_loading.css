@@ -1,0 +1,20 @@
+.header__logo_loading {
+    position: absolute;
+    top: 50vh;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(2);
+    z-index: 2;
+    animation: none;
+}
+
+@media screen and (min-width: 620px) {
+    .header__logo_loading {
+        transform: translate(-50%, -50%) scale(4);
+    }
+}
+
+@media screen and (min-width: 1000px) {
+    .header__logo_loading {
+        transform: translate(-50%, -50%) scale(6);
+    }
+}
